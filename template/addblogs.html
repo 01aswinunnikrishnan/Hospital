@@ -1,0 +1,231 @@
+
+{% load static %}
+
+
+{% block content %}
+
+{% if error %}
+<script>
+  alert("{{error}}")
+</script>
+{% endif %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     {% load static %}
+
+     <title>Health - Medical Website Template</title>
+<!--
+
+Template 2098 Health
+
+http://www.tooplate.com/view/2098-health
+
+-->
+     <meta charset="UTF-8">
+     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+     <meta name="description" content="">
+     <meta name="keywords" content="">
+     <meta name="author" content="Tooplate">
+     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+     <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+     <link rel="stylesheet" href="{% static 'css/animate.css' %}">
+     <link rel="stylesheet" href="{% static 'css/owl.carousel.css' %}">
+     <link rel="stylesheet" href="{% static 'css/owl.theme.default.min.css' %}">
+
+     <!-- MAIN CSS -->
+     <link rel="stylesheet" href="{% static 'css/tooplate-style.css' %}">
+     <style>
+              .box {
+
+width: 600px;
+height: 750px;
+padding: 16px;
+background-color:neon;
+margin: 0 auto;
+margin-top: 100px;
+box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+     </style>
+
+</head>
+<body id="top" data-spy="scroll" data-target=".navbar-collapse" data-offset="50">
+
+     <!-- PRE LOADER -->
+     <section class="preloader">
+          <div class="spinner">
+
+               <span class="spinner-rotate"></span>
+
+          </div>
+     </section>
+
+
+     <!-- HEADER -->
+     <header>
+          <div class="container">
+               <div class="row">
+
+                    <div class="col-md-4 col-sm-5">
+                         <p>Welcome to a Professional Health Care</p>
+                    </div>
+
+                    <div class="col-md-8 col-sm-7 text-align-right">
+                         <span class="phone-icon"><i class="fa fa-phone"></i> 9850476983</span>
+                         <span class="date-icon"><i class="fa fa-calendar-plus-o"></i> 6:00 AM - 10:00 PM (Mon-Fri)</span>
+                         <span class="email-icon"><i class="fa fa-envelope-o"></i> <a href="#">Healthblogs@gmail.com</a></span>
+                    </div>
+
+               </div>
+          </div>
+     </header>
+
+
+     <!-- MENU -->
+     <section class="navbar navbar-default navbar-static-top" role="navigation">
+          <div class="container">
+
+               <div class="navbar-header">
+                    <button class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                         <span class="icon icon-bar"></span>
+                         <span class="icon icon-bar"></span>
+                         <span class="icon icon-bar"></span>
+                    </button>
+
+                    <!-- lOGO TEXT HERE -->
+                    <a href="index.html" class="navbar-brand"><i class="fa-solid fa-l"></i>Health Blogs</a>
+               </div>
+
+               <!-- MENU LINKS -->
+               <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right"> 
+                         <li><a href="../draft/{{uname}}" class="smoothscroll">Drafted Blogs</a></li>
+                         <li><a href="../yourblog/{{uname}}" class="smoothscroll">Your Blogs</a></li>
+                         <li class="appointment-btn"><a href="../7">Log Out</a></li>
+                    </ul>
+               </div>
+
+          </div>
+     </section>
+
+ <section id="appointment" data-stellar-background-ratio="3" style="position: relative; top:-100px;">
+          <div class="container">
+               <div class="row">
+
+<div class="box">
+     <!-- CONTACT FORM HERE -->
+     <form id="appointment-form" role="form" method="post" action="/addblogs/{{uname}}" enctype="multipart/form-data">
+          {% csrf_token %}
+          <!-- SECTION TITLE -->
+          <div class="section-title wow fadeInUp" data-wow-delay="0.4s">
+               <h2 style="position: relative; left:130px;">Create Blogs</h2>
+          </div>
+
+          <div class="wow fadeInUp" data-wow-delay="0.8s">
+               <div class="col-md-12 col-sm-12">
+                    <label for="title"><b>Title:</b></label>
+                    <input type="text" class="form-control" id="title" name="title" placeholder="Enter Your Title" required>
+
+
+               </div>
+               
+                    <div class="col-md-12 col-sm-12">
+                         <label for="image"><b>Image:</b></label>
+                         <input type="file" class="form-control" id="image" name="image" required>
+
+
+                    </div>
+                    
+                         <div class="col-md-12 col-sm-12">
+                              <label for="category"><b>Category:</b></label>
+                              <select name="category" required>
+                                   <option selected disabled>Select Your Category</option>
+                                  {% for category in categories %}
+                                  <option value="{{ category.id }}">{{ category.name }}</option>
+                                  {% endfor %}
+                              </select>
+
+                         </div>
+                         
+                              <div class="col-md-12 col-sm-12">
+                                   <label for="summary"><b>Summary:</b></label>
+                                  <textarea class="form-control" id="summary" name="summary" rows="3" placeholder="Enter The Summary"></textarea>
+                              </div>
+
+               <div class="col-md-12 col-sm-12">
+                    <label for="content"><b>Content:</b></label>
+                    <textarea class="form-control" id="content" name="content" rows="3" placeholder="Enter The Content"></textarea>
+               </div>
+               
+
+               <div class="col-md-12 col-sm-12">
+                    <label for="is_draft"><b>Save as draft</b></label>
+                    <input type="checkbox" class="form-control" id="is_draft" name="is_draft">
+
+               </div>
+
+                   <button type="submit" class="form-control" id="cf-submit" name="submit">Create</button>
+               </div>
+          </div>
+    </form>
+</div>
+
+</div>
+</div>
+</section>
+
+
+
+ <!-- FOOTER -->
+ <footer data-stellar-background-ratio="5">
+     <div class="container">
+          <div class="row">
+
+               <div class="col-md-4 col-sm-4">
+                    <div class="footer-thumb">
+                         <h4 class="wow fadeInUp" data-wow-delay="0.4s">Contact Info</h4>
+                         <p>Hospital Kochi near Jawaharlal Nehru stadium , Ernakulam.</p>
+
+                         <div class="contact-info">
+                              <p><i class="fa fa-phone"></i> 9850476983</p>
+                              <p><i class="fa fa-envelope-o"></i> <a href="#">Hospital@gmail.com</a></p>
+                         </div>
+                    </div>
+               </div>
+               <div class="col-md-6 col-sm-12">
+                    <div class="footer-thumb">
+                         <div class="opening-hours">
+                              <h4 class="wow fadeInUp" data-wow-delay="0.4s">Opening Hours</h4>
+                              <p>Monday - Friday <span>06:00 AM - 10:00 PM</span></p>
+                              <p>Saturday <span>09:00 AM - 08:00 PM</span></p>
+                              <p>Sunday <span>Closed</span></p>
+                         </div>
+
+                         <ul class="social-icon">
+                              <li><a href="https://www.facebook.com/tooplate" class="fa fa-facebook-square" attr="facebook icon"></a></li>
+                              <li><a href="#" class="fa fa-twitter"></a></li>
+                              <li><a href="#" class="fa fa-instagram"></a></li>
+                         </ul>
+                    </div>
+               </div>
+
+
+          </div>
+     </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="{% static 'js/jquery.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/jquery.sticky.js' %}"></script>
+<script src="{% static 'js/jquery.stellar.min.js' %}"></script>
+<script src="{% static 'js/wow.min.js' %}"></script>
+<script src="{% static 'js/smoothscroll.js' %}"></script>
+<script src="{% static 'js/owl.carousel.min.js' %}"></script>
+<script src="{% static 'js/custom.js' %}"></script>
+
+</body>
+</html>
+{% endblock %}

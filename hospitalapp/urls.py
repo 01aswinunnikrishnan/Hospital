@@ -28,4 +28,9 @@ urlpatterns = [
     path('5/<u>',views.patient_profile),
     path('6/<u>',views.doctor_profile),
     path('7',views.user_logout),
+    path('8/<uname>',views.addblog),
+    path('addblogs/<uname>',views.add_blog),
+    path('yourblog/<uname>',views.doctorblog),
+    path('draft/<uname>',views.draft_blogs),
+    path('viewpost/<uname>',views.view_post)
 ]
