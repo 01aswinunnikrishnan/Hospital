@@ -44,5 +44,18 @@ class Blogs(models.Model):
     def __str__(self):
         return self.title
 
-    
+class Appointment(models.Model):
+    patient = models.ForeignKey(userreg, on_delete=models.CASCADE)
+    specialty = models.CharField(max_length=25)
+    date = models.DateField()
+    start_time = models.TimeField()
+    doctor = models.ForeignKey(doctorreg,on_delete=models.CASCADE)
+    def __str__(self):
+        return f"Appointment with {self.doctor} on {self.date} at {self.start_time}"
+
+class DoctorOAuthToken(models.Model):
+    doctor = models.OneToOneField('doctorreg', on_delete=models.CASCADE)
+    access_token = models.TextField()
+    refresh_token = models.TextField()
+    token_expiry = models.DateTimeField()
 

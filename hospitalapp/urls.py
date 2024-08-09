@@ -32,5 +32,10 @@ urlpatterns = [
     path('addblogs/<uname>',views.add_blog),
     path('yourblog/<uname>',views.doctorblog),
     path('draft/<uname>',views.draft_blogs),
-    path('viewpost/<uname>',views.view_post)
+    path('viewpost/<uname>',views.view_post),
+    path('viewdoctors/<uname>',views.viewdoctors),
+    path('booking/<id>/<uname>',views.booking),
+    path('bookconfirm/<id>/<uname>',views.appointment_confirmation),
+    path('view_doctor_appointments/<uname>/', views.view_doctor_appointments),
+
 ]

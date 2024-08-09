@@ -1,7 +1,10 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from.models import *
 from django.contrib.auth import logout
-
+from .google_calendar import create_calendar_event
+from datetime import datetime, timedelta
+from googleapiclient.discovery import build
+from google.oauth2.credentials import Credentials
 
 def signup(request):
     return render(request,'signup.html')
@@ -126,8 +129,125 @@ def view_post(request,uname):
     categories=Category.objects.all()
     return render(request,'viewallblogs.html',{'uname':uname,'post':posts,'posts_category':posts_category,'categories':categories})
 
+def viewdoctors(request,uname):
+    doctor=doctorreg.objects.all()
+    return render(request,'viewdoctors.html',{'uname':uname,'doctor':doctor})
+
+def booking(request,id,uname):
+    doctor = get_object_or_404(doctorreg, id=id)
+    return render(request, 'booking.html', {'uname': uname, 'doctor': doctor})
 
 
 
 
-# Create your views here.
+def appointment_confirmation(request, id, uname):
+    doctor = get_object_or_404(doctorreg, id=id)
+
+    if request.method == 'POST':
+        specialty = request.POST['speciality']
+        date = request.POST['date']
+        start_time_str = request.POST['start_time']
+
+        try:
+            start_time = datetime.strptime(start_time_str, '%H:%M').time()
+        except ValueError:
+            return render(request, 'booking.html', {'uname': uname, 'doctor': doctor, 'error': 'Invalid time format'})
+
+        start_datetime = datetime.combine(datetime.strptime(date, '%Y-%m-%d'), start_time)
+        end_datetime = start_datetime + timedelta(minutes=45)
+
+        patient = get_object_or_404(userreg, username=uname)
+
+        # Retrieve all appointments on the same date for this doctor
+        existing_appointments = Appointment.objects.filter(
+            doctor=doctor,
+            date=date
+        )
+
+        # Check for overlap
+        for appointment in existing_appointments:
+            appointment_start = datetime.combine(datetime.strptime(date, '%Y-%m-%d'), appointment.start_time)
+            appointment_end = appointment_start + timedelta(minutes=45)
+
+            if (appointment_start < end_datetime and start_datetime < appointment_end):
+                return render(request, 'booking.html',
+                              {'uname': uname, 'doctor': doctor, 'error': 'Time slot already taken'})
+
+        # If no overlap, create the new appointment
+        Appointment.objects.create(
+            patient=patient,
+            specialty=specialty,
+            date=date,
+            start_time=start_time,
+            doctor=doctor
+        )
+
+        return render(request, 'view_appointment.html', {
+            'doctor_name': doctor.first_name + ' ' + doctor.last_name,
+            'appointment_date': date,
+            'start_time': start_time_str,
+            'end_time': end_datetime.strftime('%H:%M'),
+        })
+
+    return render(request, 'booking.html', {'uname': uname, 'doctor': doctor})
+
+
+def view_doctor_appointments(request, uname):
+    doctor = get_object_or_404(doctorreg, username=uname)
+
+    # Query appointments for this doctor
+    appointments = Appointment.objects.filter(doctor=doctor).order_by('date', 'start_time')
+
+    # Calculate end times for each appointment
+    appointments_with_end_times = []
+    for appointment in appointments:
+        start_datetime = datetime.combine(appointment.date, appointment.start_time)
+        end_datetime = start_datetime + timedelta(minutes=45)
+        appointment_end_time = end_datetime.time()
+        appointments_with_end_times.append({
+            'appointment': appointment,
+            'end_time': appointment_end_time
+        })
+
+    return render(request, 'view_appointment_events.html', {
+        'doctor': doctor,
+        'appointments_with_end_times': appointments_with_end_times
+    })
+
+
+# def book_appointment(request, doctor_id):
+#     doctor = get_object_or_404(doctorreg, id=doctor_id)
+#     if request.method == 'POST':
+#         patient_name = request.POST['patient_name']
+#         date = request.POST['date']
+#         start_time = request.POST['start_time']
+#         end_time = (datetime.datetime.strptime(start_time, '%H:%M') + timedelta(minutes=45)).time()
+#
+#         appointment = Appointment.objects.create(
+#             doctor=doctor,
+#             patient_name=patient_name,
+#             date=date,
+#             start_time=start_time,
+#             end_time=end_time
+#         )
+#
+#         # Create Google Calendar event
+#         start_datetime = datetime.datetime.combine(datetime.date.fromisoformat(date), start_time)
+#         end_datetime = datetime.datetime.combine(datetime.date.fromisoformat(date), end_time)
+#         create_calendar_event(
+#             doctor.email,
+#             f"Appointment with {patient_name}",
+#             f"Appointment for {patient_name}",
+#             start_datetime,
+#             end_datetime
+#         )
+#
+#         return render(request, 'appointment_confirmation.html', {'appointment': appointment})
+#
+#     return render(request, 'book_appointment.html', {'doctor': doctor})
+#
+# def view_doctor_appointments(request, username):
+#     doctor = get_object_or_404(doctorreg, username=username)
+#     events = get_doctor_calendar_events(doctor.email)
+#     return render(request, 'view_doctor_appointments.html', {'events': events})
+#
