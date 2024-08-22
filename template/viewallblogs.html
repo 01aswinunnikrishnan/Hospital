@@ -74,6 +74,43 @@ color: #333;
     margin-top: 10px;
 }
 
+
+
+
+/* CSS for Read More / Read Less Button */
+.read-more-btn {
+    background-color: #007bff; /* Blue background color */
+    color: white; /* White text color */
+    border: none; /* Remove default border */
+    padding: 10px 15px; /* Add padding for size */
+    font-size: 16px; /* Adjust font size */
+    cursor: pointer; /* Pointer cursor on hover */
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth color transition */
+    display: inline-block; /* Ensure it fits the content */
+    text-align: center; /* Center align text */
+    margin-top: 10px; /* Space above the button */
+}
+
+/* Hover effect */
+.read-more-btn:hover {
+    background-color: #0056b3; /* Darker blue background on hover */
+    color: #e0e0e0; /* Light gray text color on hover */
+}
+
+/* Active effect */
+.read-more-btn:active {
+    background-color: #00408a; /* Even darker blue when pressed */
+    color: #ffffff; /* Ensure text remains readable */
+}
+
+/* Focus effect for accessibility */
+.read-more-btn:focus {
+    outline: 2px solid #0056b3; /* Blue outline for focus */
+    outline-offset: 2px; /* Space between outline and button */
+}
+
+
      </style>
 
 </head>
@@ -139,34 +176,81 @@ color: #333;
           <div class="container">
                <div class="row">
                    <h1>All Blogs</h1>
-
 {% for category, posts in posts_category.items %}
-        <h2>{{ category.name }}</h2>
+    <h2>{{ category.name }}</h2>
 
-                    <div class="box">
-                        {% if posts %}
 
-                {% for post in posts %}
-                       <img src="{{ post.image.url }}" style="position:relative; left:170px;"><br>
-                         <h2>{{ post.title }}</h2><br>
-                           <p>by {{ post.author.first_name }} {{ post.author.last_name }}</p>
-                         <p class="content"><b>Content:</b></p><p style="Color:black">{{ post.content }}</p> <br>
-                         <p class="summary"><b>Summary:</b></p><p style="Color:black">
-                         {% if post.summary|wordcount > 15 %}
-                        {{ post.summary|truncatewords:15 }}...
-                    {% else %}
+        {% if posts %}
+            {% for post in posts %}
+                   <div class="box">
+
+                    <img src="{{ post.image.url }}" style="width: 150px; height: 150px; object-fit: cover;"><br>
+                    <h2>{{ post.title }}</h2><br>
+                    <p>by {{ post.author.first_name }} {{ post.author.last_name }}</p>
+
+                    <!-- Content Preview -->
+                    <p class="content"><b>Content:</b></p>
+                    <p class="content-preview" id="content-preview-{{ post.id }}" style="Color:black">
+                        {{ post.content|truncatewords:30 }}
+                    </p>
+                    <p class="full-content" id="full-content-{{ post.id }}" style="display:none; Color:black">
+                        {{ post.content }}
+                    </p>
+
+                    <!-- Summary Preview -->
+                    <p class="summary"><b>Summary:</b></p>
+                    <p class="summary-preview" id="summary-preview-{{ post.id }}" style="Color:black">
+                        {% if post.summary|wordcount > 15 %}
+                            {{ post.summary|truncatewords:15 }}...
+                        {% else %}
+                            {{ post.summary }}
+                        {% endif %}
+                    </p>
+                    <p class="full-summary" id="full-summary-{{ post.id }}" style="display:none; Color:black">
                         {{ post.summary }}
-                    {% endif %}</p> <br>
+                    </p>
 
-
-                         {% endfor %}
-                    {% else %}
-               <h4 class="wow-fadeInUp" data-wow-delay="0.4s">No Blogs</h4>
-               {% endif %}
- </div>
-
+                    <!-- Read More / Read Less Button -->
+                    <button class="read-more-btn" data-post-id="{{ post.id }}">Read More</button>
+                </div>
+            {% endfor %}
+        {% else %}
+            <h4 class="wow-fadeInUp" data-wow-delay="0.4s">No Blogs</h4>
+        {% endif %}
+    </div>
 {% endfor %}
+
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const readMoreButtons = document.querySelectorAll('.read-more-btn');
+
+        readMoreButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const postId = this.getAttribute('data-post-id');
+                const contentPreview = document.getElementById('content-preview-' + postId);
+                const fullContent = document.getElementById('full-content-' + postId);
+                const summaryPreview = document.getElementById('summary-preview-' + postId);
+                const fullSummary = document.getElementById('full-summary-' + postId);
+
+                // Toggle content and summary visibility
+                if (fullContent.style.display === 'none') {
+                    fullContent.style.display = 'block';
+                    fullSummary.style.display = 'block';
+                    contentPreview.style.display = 'none';
+                    summaryPreview.style.display = 'none';
+                    this.textContent = 'Read Less'; // Change button text to 'Read Less'
+                } else {
+                    fullContent.style.display = 'none';
+                    fullSummary.style.display = 'none';
+                    contentPreview.style.display = 'block';
+                    summaryPreview.style.display = 'block';
+                    this.textContent = 'Read More'; // Change button text to 'Read More'
+                }
+            });
+        });
+    });
+</script>
 
 </div>
 </section>

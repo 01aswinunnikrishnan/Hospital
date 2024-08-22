@@ -1,10 +1,9 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from.models import *
 from django.contrib.auth import logout
-from .google_calendar import create_calendar_event
+
 from datetime import datetime, timedelta
-from googleapiclient.discovery import build
-from google.oauth2.credentials import Credentials
+
 
 def signup(request):
     return render(request,'signup.html')

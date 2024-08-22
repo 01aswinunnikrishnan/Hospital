@@ -84,6 +84,39 @@ color: #333;
     margin-top: 10px;
 }
 
+/* CSS for Read More / Read Less Button */
+.read-more-btn {
+    background-color: #007bff; /* Blue background color */
+    color: white; /* White text color */
+    border: none; /* Remove default border */
+    padding: 10px 15px; /* Add padding for size */
+    font-size: 16px; /* Adjust font size */
+    cursor: pointer; /* Pointer cursor on hover */
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth color transition */
+    display: inline-block; /* Ensure it fits the content */
+    text-align: center; /* Center align text */
+    margin-top: 10px; /* Space above the button */
+}
+
+/* Hover effect */
+.read-more-btn:hover {
+    background-color: #0056b3; /* Darker blue background on hover */
+    color: #e0e0e0; /* Light gray text color on hover */
+}
+
+/* Active effect */
+.read-more-btn:active {
+    background-color: #00408a; /* Even darker blue when pressed */
+    color: #ffffff; /* Ensure text remains readable */
+}
+
+/* Focus effect for accessibility */
+.read-more-btn:focus {
+    outline: 2px solid #0056b3; /* Blue outline for focus */
+    outline-offset: 2px; /* Space between outline and button */
+}
+
      </style>
 
 </head>
@@ -150,31 +183,75 @@ color: #333;
           <div class="container">
                <div class="row">
                    <h1>Your Blogs</h1>
-       {% if blog %}
+      {% if blog %}
+    <!-- CONTACT FORM HERE -->
+    {% for i in blog %}
+        <div class="box">
+            <h2>{{ i.title }}</h2><br>
+            <img src="{{ i.image.url }}" style="width: 150px; height: 150px; object-fit: cover;"><br>
 
-     <!-- CONTACT FORM HERE -->
-     {% for i in blog %}
-                    <div class="box">
+            <!-- Content Preview -->
+            <p class="content"><b>Content:</b></p>
+            <p class="content-preview" id="content-preview-{{ i.id }}" style="Color:black">
+                {{ i.content|truncatewords:30 }}
+            </p>
+            <p class="full-content" id="full-content-{{ i.id }}" style="display:none; Color:black">
+                {{ i.content }}
+            </p>
 
+            <!-- Summary Preview -->
+            <p class="summary"><b>Summary:</b></p>
+            <p class="summary-preview" id="summary-preview-{{ i.id }}" style="Color:black">
+                {% if i.summary|wordcount > 15 %}
+                    {{ i.summary|truncatewords:15 }}...
+                {% else %}
+                    {{ i.summary }}
+                {% endif %}
+            </p>
+            <p class="full-summary" id="full-summary-{{ i.id }}" style="display:none; Color:black">
+                {{ i.summary }}
+            </p>
 
-                         <h2>{{ i.title }}</h2><br>
-                                      <img src="{{ i.image.url }}" style="position:relative; left:170px;"><br>
-                         <p class="content"><b>Content:</b></p><p style="Color:black">{{ i.content }}</p> <br>
-                         <p class="summary"><b>Summary:</b></p><p style="Color:black">
-                         {% if i.summary|wordcount > 15 %}
-                        {{ i.summary|truncatewords:15 }}...
-                    {% else %}
-                        {{ i.summary }}
-                    {% endif %}</p> <br>
-                                     <p class="posted-at"><b>Posted At:</b></p><p style="Color:black">{{ i.created_at }}</p>
+            <button class="read-more-btn" data-content-id="{{ i.id }}">Read More</button>
 
- </div>
+            <p class="posted-at"><b>Posted At:</b></p>
+            <p style="Color:black">{{ i.created_at }}</p>
+        </div>
     {% endfor %}
-                    {% else %}
-               <h4 class="wow-fadeInUp" data-wow-delay="0.4s">No Blogs</h4>
-               {% endif %}
+{% else %}
+    <h4 class="wow-fadeInUp" data-wow-delay="0.4s">No Blogs</h4>
+{% endif %}
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const readMoreButtons = document.querySelectorAll('.read-more-btn');
 
+        readMoreButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const contentId = this.getAttribute('data-content-id');
+                const contentPreview = document.getElementById('content-preview-' + contentId);
+                const fullContent = document.getElementById('full-content-' + contentId);
+                const summaryPreview = document.getElementById('summary-preview-' + contentId);
+                const fullSummary = document.getElementById('full-summary-' + contentId);
+
+                // Toggle content and summary visibility
+                if (fullContent.style.display === 'none') {
+                    fullContent.style.display = 'block';
+                    fullSummary.style.display = 'block';
+                    contentPreview.style.display = 'none';
+                    summaryPreview.style.display = 'none';
+                    this.textContent = 'Read Less'; // Change button text to 'Read Less'
+                } else {
+                    fullContent.style.display = 'none';
+                    fullSummary.style.display = 'none';
+                    contentPreview.style.display = 'block';
+                    summaryPreview.style.display = 'block';
+                    this.textContent = 'Read More'; // Change button text to 'Read More'
+                }
+            });
+        });
+    });
+</script>
 
 </div>
 </div>

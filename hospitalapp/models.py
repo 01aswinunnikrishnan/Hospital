@@ -37,8 +37,8 @@ class Blogs(models.Model):
     title=models.CharField(max_length=25)
     image=models.FileField()
     category=models.ForeignKey(Category,on_delete=models.CASCADE)
-    summary=models.CharField(max_length=100)
-    content=models.CharField(max_length=100)
+    summary=models.CharField(max_length=1000)
+    content=models.CharField(max_length=1000)
     is_draft=models.BooleanField(default=True)
     created_at=models.DateTimeField(default=timezone.now)
     def __str__(self):
